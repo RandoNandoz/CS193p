@@ -14,8 +14,13 @@ struct ContentView: View { // struct, not a class
     // some View -> type of body can be ANYTHING but it has to be a view
     var body: some View { // computed property, not stored, but it's computed
         VStack {
-            Card(displayStr: "🤔")
-            Card(isFaceUp: false, displayStr: "😡")
+            let emojis: [String] = [
+                "👻", "🫡", "😤"
+            ]
+            
+            ForEach(emojis.indices, id: \.self) { index in
+                Card(isFaceUp: false, displayStr: emojis[index])
+            }
         }
         
         /*
@@ -30,10 +35,14 @@ struct ContentView: View { // struct, not a class
 }
 
 struct Card: View {
-    var isFaceUp: Bool = true
+    @State var isFaceUp = true
     var displayStr: String
+    
+    // view modifier
+    
     var body : some View {
-        ZStack() { // a function
+        // trailing closure syntax: last param is closure (lambda) {}
+        ZStack { // a function
             // weird function
             // creates a tuple view, returns it
             //            Image(systemName: "globe")
@@ -44,14 +53,16 @@ struct Card: View {
             
             // <Struct Name>(<args...>) -> new struct
             // named parameter: a specified parameter
+            let base = RoundedRectangle(cornerRadius: 12)
             if isFaceUp {
-                RoundedRectangle(cornerRadius: 12).foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12).strokeBorder(lineWidth: 2)
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 2)
                 Text(displayStr).font(.largeTitle)
             } else {
-                RoundedRectangle(cornerRadius: 12).foregroundColor(.black)
-                
+                base.foregroundColor(.gray)
             }
+        }.onTapGesture { // count: number of counts
+            isFaceUp.toggle()
         }
     }
 }
